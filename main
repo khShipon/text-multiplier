@@ -1,0 +1,100 @@
+import { useState } from 'react';
+
+interface Text {
+  id: number;
+  text: string;
+}
+
+const TextMaker = () => {
+  const [text, setText] = useState('');
+  const [texts, setTexts] = useState<Text[]>([]);
+  const [lines, setLines] = useState(100);
+  const [copied, setCopied] = useState(false);
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value);
+  };
+
+  const handleLinesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLines(Number(e.target.value));
+  };
+
+  const handleMakeTexts = () => {
+    const newTexts: Text[] = [];
+    for (let i = 0; i < lines; i++) {
+      newTexts.push({ id: i, text });
+    }
+    setTexts(newTexts);
+  };
+
+  const handleCopyTexts = () => {
+    navigator.clipboard.writeText(texts.map((text) => text.text).join('\n'));
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+  };
+
+  const handleReset = () => {
+    setText('');
+    setTexts([]);
+    setLines(100);
+  };
+
+  return (
+    <div className="max-w-md mx-auto p-4 bg-white rounded-md shadow-md">
+      <h1 className="text-3xl font-bold mb-4">Text Maker</h1>
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="text">
+          Text
+        </label>
+        <input
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="text"
+          type="text"
+          value={text}
+          onChange={handleTextChange}
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="lines">
+          Number of Lines
+        </label>
+        <input
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="lines"
+          type="number"
+          value={lines}
+          onChange={handleLinesChange}
+        />
+      </div>
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+        onClick={handleMakeTexts}
+      >
+        Make Texts
+      </button>
+      <button
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+        onClick={handleCopyTexts}
+      >
+        {copied ? 'Copied!' : 'Copy to Clipboard'}
+      </button>
+      <button
+        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        onClick={handleReset}
+      >
+        Reset
+      </button>
+      <ul className="mt-4">
+        {texts.map((text) => (
+          <li key={text.id} className="mb-2">
+            {text.text}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default TextMaker;
